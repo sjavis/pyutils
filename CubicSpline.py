@@ -47,7 +47,6 @@ class CubicSpline:
         self.M = points.shape[1]
         self.bc_type = bc_type
         
-        # Find the cubic polynomial coefficients
         self.coef = np.zeros((self.N-1, self.M, 4))
         for i_d, dim in enumerate(points.T):
             mat = np.zeros((self.N, self.N))
@@ -74,6 +73,7 @@ class CubicSpline:
             
             derivs = np.matmul(np.linalg.inv(mat), row)
             
+            # Find the cubic polynomial coefficients
             self.coef[:,i_d,0] = dim[:-1]
             self.coef[:,i_d,1] = derivs[:-1]
             self.coef[:,i_d,2] = 3*(dim[1:] - dim[:-1]) - 2*derivs[:-1] - derivs[1:]
