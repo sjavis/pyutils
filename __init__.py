@@ -1,2 +1,2 @@
 #!/usr/bin/env python3
-from .CubicSpline import CubicSpline
+from .cubic_spline import CubicSpline
