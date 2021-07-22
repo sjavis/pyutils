@@ -11,9 +11,9 @@ def update_width(width):
 
 def figsize(scale, ratio=None):
     inches_per_pt = 1.0/72.27                           # Convert pt to inch
-    if ratio is None: ratio = (np.sqrt(5.0)-1.0)/2.0    # Aesthetic ratio
+    if ratio is None: ratio = 2.0/(np.sqrt(5.0)-1.0)    # Aesthetic ratio
     fig_width = latex_width_pt*inches_per_pt*scale      # width in inches
-    fig_height = fig_width*ratio                        # height in inches
+    fig_height = fig_width/ratio                        # height in inches
     fig_size = [fig_width,fig_height]
     return fig_size
 
@@ -48,14 +48,18 @@ mpl.rcParams.update(options)
 
 
 ### User functions ###
-def newfig(width, ratio=None, **kwargs):
+def figure(width, ratio=None, **kwargs):
+    fig = plt.figure(figsize=figsize(width, ratio), **kwargs)
+    return fig
+
+def subplots(width, ratio=None, **kwargs):
     fig, ax = plt.subplots(figsize=figsize(width, ratio), **kwargs)
     return fig, ax
 
-def savefig(filename, fig=None):
+def savefig(filename, fig=None, **kwargs):
     if fig is None: fig = plt.gcf()
-    fig.savefig('{}.pgf'.format(filename), bbox_inches='tight')
-    fig.savefig('{}.pdf'.format(filename), bbox_inches='tight')
+    fig.savefig('{}.pgf'.format(filename), **kwargs)
+    fig.savefig('{}.pdf'.format(filename), **kwargs)
 
 
 ### Reset Matplotlib rc params at end of script ###
