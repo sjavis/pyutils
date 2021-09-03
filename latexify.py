@@ -22,10 +22,10 @@ def figsize(scale, ratio=None):
 options = {
     "text.usetex": True,                  # use LaTeX to write all text
     "pgf.texsystem": "pdflatex",          # change this if using xetex or lautex
-    "pgf.preamble": [
+    "pgf.preamble": "\n".join([
         r"\usepackage[utf8x]{inputenc}",  # use utf8 fonts becasue your computer can handle it :)
         r"\usepackage[T1]{fontenc}",      # plots will be generated using this preamble
-        ],
+        ]),
     
     "font.family": "serif",
     "font.serif": [],                     # blank entries should cause plots to inherit fonts from the document
@@ -41,6 +41,7 @@ options = {
     "ytick.labelsize": 8,
     "ytick.direction": "in",
     "ytick.right": True,
+    "axes.linewidth": 0.7,
     
     "figure.figsize": figsize(0.9),       # default fig size of 0.9 textwidth
     }
