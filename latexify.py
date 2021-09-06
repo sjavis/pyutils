@@ -80,3 +80,8 @@ else:
 @exit_register
 def reset_rcparams():
     mpl.rcParams.update(mpl.rcParamsDefault)
+
+    # Ensure IPython reloads the module
+    import sys
+    del sys.modules['pyutils']
+    del sys.modules['pyutils.latexify']
