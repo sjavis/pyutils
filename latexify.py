@@ -9,11 +9,11 @@ def update_width(width):
     global latex_width_pt
     latex_width_pt = width
 
-def figsize(scale, ratio=None):
-    inches_per_pt = 1.0/72.27                           # Convert pt to inch
-    if ratio is None: ratio = 2.0/(np.sqrt(5.0)-1.0)    # Aesthetic ratio
-    fig_width = latex_width_pt*inches_per_pt*scale      # width in inches
-    fig_height = fig_width/ratio                        # height in inches
+def figsize(scale_width, ratio=None):
+    inches_per_pt = 1.0/72.27                            # Convert pt to inch
+    if ratio is None: ratio = (np.sqrt(5.0)-1.0)/2.0     # Aesthetic ratio (height/width)
+    fig_width = latex_width_pt*inches_per_pt*scale_width # width in inches
+    fig_height = fig_width*ratio                         # height in inches
     fig_size = [fig_width,fig_height]
     return fig_size
 
@@ -25,6 +25,10 @@ options = {
     "pgf.preamble": "\n".join([
         r"\usepackage[utf8x]{inputenc}",  # use utf8 fonts becasue your computer can handle it :)
         r"\usepackage[T1]{fontenc}",      # plots will be generated using this preamble
+        ]),
+    "text.latex.preamble": "\n".join([
+        r"\usepackage{amsmath}",
+        r"\usepackage{bm}",               # bold math symbols
         ]),
     
     "font.family": "serif",
@@ -80,6 +84,7 @@ else:
 @exit_register
 def reset_rcparams():
     mpl.rcParams.update(mpl.rcParamsDefault)
+    mpl.rcParams["text.latex.preamble"] = "\\usepackage{amsmath}\n\\usepackage{bm}"
 
     # Ensure IPython reloads the module
     import sys
