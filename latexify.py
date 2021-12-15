@@ -63,8 +63,11 @@ def subplots(width, ratio=None, **kwargs):
 
 def savefig(filename, fig=None, **kwargs):
     if fig is None: fig = plt.gcf()
-    fig.savefig('{}.pgf'.format(filename), **kwargs)
-    fig.savefig('{}.pdf'.format(filename), **kwargs)
+    if (filename[-4:] in [".pgf", ".pdf", ".png"]): 
+        fig.savefig(filename, **kwargs)
+    else:
+        fig.savefig('{}.pgf'.format(filename), **kwargs)
+        fig.savefig('{}.pdf'.format(filename), **kwargs)
 
 
 ### Reset Matplotlib rc params at end of script ###
