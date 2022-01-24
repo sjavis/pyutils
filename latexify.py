@@ -5,9 +5,17 @@ import matplotlib.pyplot as plt
 latex_width_pt = 455.244  # Get this from LaTeX using \the\textwidth
 
 def update_width(width):
-    ''' Update the latex page width, found using \the\textwidth. Default: 455.244'''
+    ''' Update the latex page width, found using \the\textwidth. Default: 455.244
+    Can also use 'r4', 'r4-single', and 'r4-double' for revtex4 sizes.'''
     global latex_width_pt
-    latex_width_pt = width
+    if (width == 'r4'):
+        latex_width_pt = 455.244
+    elif (width == 'r4-single'):
+        latex_width_pt = 246
+    elif (width == 'r4-double'):
+        latex_width_pt = 510
+    else:
+        latex_width_pt = width
 
 def figsize(scale_width, ratio=None):
     inches_per_pt = 1.0/72.27                            # Convert pt to inch
