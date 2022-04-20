@@ -3,6 +3,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 latex_width_pt = 455.244  # Get this from LaTeX using \the\textwidth
+dpi = 500
 
 def update_width(width):
     ''' Update the latex page width, found using \the\textwidth. Default: 455.244
@@ -14,6 +15,14 @@ def update_width(width):
         latex_width_pt = 246
     elif (width == 'r4-double'):
         latex_width_pt = 510
+    elif (width == 'natcomm-single'):
+        latex_width_pt = 255.118
+    elif (width == 'natcomm-double'):
+        latex_width_pt = 510.236
+    elif (width == 'nature-single'):
+        latex_width_pt = 252.283
+    elif (width == 'nature-double'):
+        latex_width_pt = 518.74
     else:
         latex_width_pt = width
 
@@ -38,7 +47,7 @@ options = {
         r"\usepackage{amsmath}",
         r"\usepackage{bm}",               # bold math symbols
         ]),
-    
+
     "font.family": "serif",
     "font.serif": [],                     # blank entries should cause plots to inherit fonts from the document
     "font.sans-serif": [],
@@ -46,7 +55,7 @@ options = {
     "font.size": 10,
     "axes.labelsize": 10,                 # LaTeX default is 10pt font.
     "legend.fontsize": 8,                 # Make the legend/label fonts a little smaller
-    
+
     "xtick.labelsize": 8,
     "xtick.direction": "in",
     "xtick.top": True,
@@ -54,7 +63,7 @@ options = {
     "ytick.direction": "in",
     "ytick.right": True,
     "axes.linewidth": 0.7,
-    
+
     "figure.figsize": figsize(0.9),       # default fig size of 0.9 textwidth
     }
 mpl.rcParams.update(options)
@@ -69,13 +78,13 @@ def subplots(width, ratio=None, **kwargs):
     fig, ax = plt.subplots(figsize=figsize(width, ratio), **kwargs)
     return fig, ax
 
-def savefig(filename, fig=None, **kwargs):
+def savefig(filename, fig=None, dpi=dpi, **kwargs):
     if fig is None: fig = plt.gcf()
-    if (filename[-4:] in [".pgf", ".pdf", ".png"]): 
-        fig.savefig(filename, **kwargs)
+    if (filename[-4:] in [".pgf", ".pdf", ".png"]):
+        fig.savefig(filename, dpi=dpi, **kwargs)
     else:
-        fig.savefig('{}.pgf'.format(filename), **kwargs)
-        fig.savefig('{}.pdf'.format(filename), **kwargs)
+        fig.savefig('{}.pgf'.format(filename), dpi=dpi, **kwargs)
+        fig.savefig('{}.pdf'.format(filename), dpi=dpi, **kwargs)
 
 
 ### Reset Matplotlib rc params at end of script ###
