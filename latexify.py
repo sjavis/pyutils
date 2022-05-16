@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 latex_width_pt = 455.244  # Get this from LaTeX using \the\textwidth
 dpi = 500
+axis_formatter = None
 
 def update_width(width):
     ''' Update the latex page width, found using \the\textwidth. Default: 455.244
@@ -68,15 +69,34 @@ options = {
     }
 mpl.rcParams.update(options)
 
+def format_axes(ax):
+    if (axis_formatter is not None):
+        ax.xaxis.set_major_formatter(axis_formatter)
+        ax.yaxis.set_major_formatter(axis_formatter)
+
+class FigureWrapper():
+    def __init__(self, fig=None, *args, **kwargs):
+        if (fig is None):
+            fig = plt.Figure(*args, **kwargs)
+        self.fig = fig
+    def add_axes(self, *args, **kwargs):
+        ax = self.fig.add_axes(*args, **kwargs)
+        format_axes(ax)
+        return ax
+    def __getattr__(self, attr):
+        return getattr(self.fig, attr)
+
 
 ### User functions ###
 def figure(width, ratio=None, **kwargs):
     fig = plt.figure(figsize=figsize(width, ratio), **kwargs)
-    return fig
+    return FigureWrapper(fig)
 
 def subplots(width, ratio=None, **kwargs):
-    fig, ax = plt.subplots(figsize=figsize(width, ratio), **kwargs)
-    return fig, ax
+    fig, ax_list = plt.subplots(figsize=figsize(width, ratio), **kwargs)
+    for ax in ax_list:
+        format_axes(ax)
+    return FigureWrapper(fig), ax_list
 
 def savefig(filename, fig=None, dpi=dpi, **kwargs):
     if fig is None: fig = plt.gcf()
