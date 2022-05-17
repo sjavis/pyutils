@@ -69,22 +69,54 @@ options = {
     }
 mpl.rcParams.update(options)
 
-def format_axes(ax):
-    if (axis_formatter is not None):
-        ax.xaxis.set_major_formatter(axis_formatter)
-        ax.yaxis.set_major_formatter(axis_formatter)
+class Formatter(mpl.ticker.Formatter):
+    def __init__(self, base_formatter):
+        self.base_formatter = base_formatter
+    def format_ticks(self, values):
+        base_labels = self.base_formatter.format_ticks(values)
+        return [axis_formatter(l) for l in base_labels]
 
 class FigureWrapper():
+    def __getattr__(self, attr):
+        return getattr(self.fig, attr)
     def __init__(self, fig=None, *args, **kwargs):
         if (fig is None):
             fig = plt.Figure(*args, **kwargs)
         self.fig = fig
     def add_axes(self, *args, **kwargs):
         ax = self.fig.add_axes(*args, **kwargs)
-        format_axes(ax)
-        return ax
+        return AxesWrapper(ax)
+
+class AxesWrapper():
     def __getattr__(self, attr):
-        return getattr(self.fig, attr)
+        return getattr(self.ax, attr)
+    def __init__(self, ax=None, *args, **kwargs):
+        if (ax is None):
+            ax = plt.Axes(*args, **kwargs)
+        self.xformatted = False
+        self.yformatted = False
+        self.ax = ax
+        self.format_axes()
+    def semilogx(self):
+        self.ax.semilogx()
+        self.xformatted = False
+        self.format_axes(which='x')
+    def semilogy(self):
+        self.ax.semilogy()
+        self.yformatted = False
+        self.format_axes(which='y')
+    def format_axes(self, which='both'):
+        if (axis_formatter is not None):
+            if (which in ['x','both']) and (not self.xformatted):
+                # if (self.ax._sharex is None):
+                base_formatter = self.ax.xaxis.get_major_formatter()
+                self.ax.xaxis.set_major_formatter(Formatter(base_formatter))
+                self.xformatted = True
+            if (which in ['y','both']) and (not self.yformatted):
+                # if (self.ax._sharey is not None) and (self.ax._sharey.yformatted):
+                base_formatter = self.ax.yaxis.get_major_formatter()
+                self.ax.yaxis.set_major_formatter(Formatter(base_formatter))
+                self.yformatted = True
 
 
 ### User functions ###
@@ -94,8 +126,8 @@ def figure(width, ratio=None, **kwargs):
 
 def subplots(width, ratio=None, **kwargs):
     fig, ax_list = plt.subplots(figsize=figsize(width, ratio), **kwargs)
-    for ax in ax_list:
-        format_axes(ax)
+    for i, ax in enumerate(ax_list):
+        ax_list[i] = AxesWrapper(ax)
     return FigureWrapper(fig), ax_list
 
 def savefig(filename, fig=None, dpi=dpi, **kwargs):
