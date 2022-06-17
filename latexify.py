@@ -7,7 +7,7 @@ dpi = 500
 axis_formatter = None
 
 def update_width(width):
-    ''' Update the latex page width, found using \the\textwidth. Default: 455.244
+    ''' Update the latex page width (in pt), found using \the\textwidth. Default: 455.244
     Can also use 'r4', 'r4-single', and 'r4-double' for revtex4 sizes.'''
     global latex_width_pt
     if (width == 'r4'):
@@ -16,6 +16,10 @@ def update_width(width):
         latex_width_pt = 246
     elif (width == 'r4-double'):
         latex_width_pt = 510
+    elif (width == 'aip-single'):
+        latex_width_pt = 242.64
+    elif (width == 'aip-double'):
+        latex_width_pt = 481.68
     elif (width == 'natcomm-single'):
         latex_width_pt = 255.118
     elif (width == 'natcomm-double'):
