@@ -127,7 +127,7 @@ class CubicSpline:
 
         if (isinstance(t, (float,int))): t = [t]
         t = np.array(t)
-        i = np.array([np.argwhere(t_val >= self.t0)[-1,0] for t_val in t])
+        i = np.array([np.squeeze(np.argwhere(t_val >= self.t0)[-1]) for t_val in t])
         ti = (t - self.t0[i]) / self.dt[i]
         ti = ti[:,np.newaxis]
 
