@@ -136,7 +136,7 @@ def subplots(width, ratio=None, **kwargs):
 
 def savefig(filename, fig=None, dpi=dpi, **kwargs):
     if fig is None: fig = plt.gcf()
-    if (filename[-4:] in [".pgf", ".pdf", ".png"]):
+    if (filename[-4:] in [".pgf", ".pdf", ".png", ".eps", ".tif"]):
         fig.savefig(filename, dpi=dpi, **kwargs)
     else:
         fig.savefig('{}.pgf'.format(filename), dpi=dpi, **kwargs)
