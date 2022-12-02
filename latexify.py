@@ -28,6 +28,8 @@ def update_width(width):
         latex_width_pt = 252.283
     elif (width == 'nature-double'):
         latex_width_pt = 518.74
+    elif (width == 'thesis'):
+        latex_width_pt = 392.648
     else:
         latex_width_pt = width
 
