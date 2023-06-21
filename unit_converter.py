@@ -3,12 +3,24 @@ import numpy as np
 
 
 class UnitConverter:
+    # SI values in l.u.
     m: float
     s: float
     kg: float
 
+    #                                        m   s  kg
+    param_dimensions = {'distance':        [ 1,  0,  0],
+                        'time':            [ 0,  1,  0],
+                        'weight':          [ 0,  0,  1],
+                        'viscosity':       [-1, -1,  1],
+                        'pressure':        [-1, -2,  1],
+                        'energy':          [ 2, -2,  1],
+                        'density':         [-3,  0,  1],
+                        'concentration':   [-3,  0,  0],
+                        'surface_tension': [ 0, -2,  1],
+                        'diffusivity':     [ 2, -1,  0]}
 
-    def __init__(self, verbose=True, dx=None, dt=None, kg=None, viscosity=None, viscosity_si=None):
+    def __init__(self, verbose=True, dx=None, dt=None, kg=None, **kwargs):
         # This can be extended to use other units too
 
         # Set up the unit matrix and the vector of ratios of the lattice and physical values
@@ -16,16 +28,21 @@ class UnitConverter:
         value_ratios = []
         if (dx is not None):
             dimensions.append([1, 0, 0])
-            value_ratios.append(1/dx)
+            value_ratios.append(dx)
         if (dt is not None):
             dimensions.append([0, 1, 0])
-            value_ratios.append(1/dt)
+            value_ratios.append(dt)
         if (kg is not None):
             dimensions.append([0, 0, 1])
-            value_ratios.append(kg)
-        if (viscosity is not None) and (viscosity_si is not None):
-            dimensions.append([-1, -1, 1])
-            value_ratios.append(viscosity / viscosity_si)
+            value_ratios.append(1/kg)
+
+        for arg in kwargs:
+            values = kwargs[arg]
+            if (not hasattr(values, "__len__") or len(values) != 2):
+                raise Exception(arg + " requires a 2-tuple containing the physical value and the lattice value.")
+            dimensions.append(self.param_dimensions[arg])
+            value_ratios.append(values[0]/values[1])
+
         if (len(dimensions)!=3) or (len(value_ratios)!=3):
             raise Exception("Three values are needed to initialise the unit converter.")
 
@@ -42,22 +59,30 @@ class UnitConverter:
 
     def __str__(self):
         return "Unit Converter:\n" + \
-              f"1 metre    = {self.m} l.u.\n" + \
-              f"1 second   = {self.s} l.u.\n" + \
-              f"1 kilogram = {self.kg} l.u."
+              f"1 l.u. = {self.m}  metre\n" + \
+              f"1 l.u. = {self.s}  second\n" + \
+              f"1 l.u. = {self.kg} kilogram"
 
 
-    def toLattice(self, value, m=0, s=0, kg=0):
-        return value * self.m**m * self.s**s * self.kg**kg
-
-
-    def toSI(self, value, m=0, s=0, kg=0):
+    def toLattice(self, value, param=None, m=0, s=0, kg=0):
+        if (param is not None):
+            m  = self.param_dimensions[param][0]
+            s  = self.param_dimensions[param][1]
+            kg = self.param_dimensions[param][2]
         return value / self.m**m / self.s**s / self.kg**kg
+
+
+    def toSI(self, value, param=None, m=0, s=0, kg=0):
+        if (param is not None):
+            m  = self.param_dimensions[param][0]
+            s  = self.param_dimensions[param][1]
+            kg = self.param_dimensions[param][2]
+        return value * self.m**m * self.s**s * self.kg**kg
 
 
 
 if (__name__ == "__main__"):
-    units = UnitConverter(dx=0.1, dt=1, viscosity=10, viscosity_si=1e-3)
+    units = UnitConverter(dx=0.1, dt=1, viscosity=[1e-3,10])
     print()
     print("10 meters in lattice units:", units.toLattice(10, m=1))
     print("10 lattice units of energy in Joules:", units.toSI(10, m=2, s=-2, kg=1))
