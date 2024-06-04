@@ -4,16 +4,14 @@ import matplotlib.pyplot as plt
 import scipy.optimize
 
 
-def pair_data(data, pair, mask_level=0.3):
+def pair_data(data, pair, mask_level=0.1):
     if (pair is None): return data
     # Get order parameter
     c1 = data[...,pair[0]]
     c2 = data[...,pair[1]]
     op = c1 - c2
     # Apply mask
-    mask1 = np.logical_or(c1<mask_level, c1>1-mask_level)
-    mask2 = np.logical_or(c2<mask_level, c2>1-mask_level)
-    mask = np.logical_or(mask1, mask2)
+    mask = 1-(c1+c2) > mask_level
     return np.ma.masked_array(op, mask)
 
 
@@ -41,7 +39,7 @@ def circle_eval(params, points):
     return np.sum((r-1/k0)**2)
 
 
-def fit_circle(data, pair=None, params_init=None, level=0, plot=False, mask_level=0.3):
+def fit_circle(data, pair=None, params_init=None, level=0, plot=False, mask_level=0.1):
     # Get the points on the interface
     data = pair_data(data, pair, mask_level)
     points = interface_points(data, level)
@@ -65,7 +63,7 @@ def fit_circle(data, pair=None, params_init=None, level=0, plot=False, mask_leve
     return x0, y0, r0
 
 
-def fit_y(data, pair=None, level=0, plot=False, mask_level=0.3):
+def fit_y(data, pair=None, level=0, plot=False, mask_level=0.1):
     # Get the points on the interface
     data = pair_data(data, pair, mask_level)
     points = interface_points(data, level)
